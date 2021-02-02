@@ -192,6 +192,7 @@
 		92B713242587098F0053BD40 /* GPUImageDarkenBlendFilter.m in Sources */ = {isa = PBXBuildFile; fileRef = 92B7126F2587098E0053BD40 /* GPUImageDarkenBlendFilter.m */; };
 		92B7133325870B4E0053BD40 /* WID-small.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 92B7133225870B4E0053BD40 /* WID-small.jpg */; };
 		92B7133625870B850053BD40 /* Lambeau.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 92B7133525870B850053BD40 /* Lambeau.jpg */; };
+		92D36F7F25C8F8EC0006B469 /* MHGPUImageContext.m in Sources */ = {isa = PBXBuildFile; fileRef = 92D36F7E25C8F8EC0006B469 /* MHGPUImageContext.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -558,6 +559,8 @@
 		92B7126F2587098E0053BD40 /* GPUImageDarkenBlendFilter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GPUImageDarkenBlendFilter.m; sourceTree = "<group>"; };
 		92B7133225870B4E0053BD40 /* WID-small.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = "WID-small.jpg"; sourceTree = "<group>"; };
 		92B7133525870B850053BD40 /* Lambeau.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = Lambeau.jpg; sourceTree = "<group>"; };
+		92D36F7D25C8F8EC0006B469 /* MHGPUImageContext.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MHGPUImageContext.h; sourceTree = "<group>"; };
+		92D36F7E25C8F8EC0006B469 /* MHGPUImageContext.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MHGPUImageContext.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -966,6 +969,8 @@
 				92B7126D2587098E0053BD40 /* GPUImageStretchDistortionFilter.h */,
 				92B7126E2587098E0053BD40 /* GLProgram.h */,
 				92B7126F2587098E0053BD40 /* GPUImageDarkenBlendFilter.m */,
+				92D36F7D25C8F8EC0006B469 /* MHGPUImageContext.h */,
+				92D36F7E25C8F8EC0006B469 /* MHGPUImageContext.m */,
 			);
 			path = Source;
 			sourceTree = "<group>";
@@ -1146,6 +1151,7 @@
 				92B7131F2587098F0053BD40 /* GPUImageFilter.m in Sources */,
 				92B712902587098E0053BD40 /* GPUImageVignetteFilter.m in Sources */,
 				92B713152587098F0053BD40 /* GPUImageMosaicFilter.m in Sources */,
+				92D36F7F25C8F8EC0006B469 /* MHGPUImageContext.m in Sources */,
 				92B712952587098E0053BD40 /* GPUImageTransformFilter.m in Sources */,
 				92B712D42587098E0053BD40 /* GPUImagePoissonBlendFilter.m in Sources */,
 				92B712AC2587098E0053BD40 /* GPUImageDissolveBlendFilter.m in Sources */,

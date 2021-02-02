@@ -2,7 +2,7 @@
 #import "GPUImageMovieWriter.h"
 #import "GPUImageFilter.h"
 #import "GPUImageColorConversion.h"
-
+#import "MHGPUImageContext.h"
 
 @interface GPUImageMovie () <AVPlayerItemOutputPullDelegate>
 {
@@ -439,13 +439,14 @@ static CVReturn renderCallback(CVDisplayLinkRef displayLink,
                 previousActualFrameTime = CFAbsoluteTimeGetCurrent();
             }
 
-            __unsafe_unretained GPUImageMovie *weakSelf = self;
-            runSynchronouslyOnVideoProcessingQueue(^{
-                [weakSelf processMovieFrame:sampleBufferRef];
-                CMSampleBufferInvalidate(sampleBufferRef);
-                CFRelease(sampleBufferRef);
-            });
-
+            if ([MHGPUImageContext sharedContext].movieWriterDealloc == NO) {
+                __unsafe_unretained GPUImageMovie *weakSelf = self;
+                runSynchronouslyOnVideoProcessingQueue(^{
+                    [weakSelf processMovieFrame:sampleBufferRef];
+                    CMSampleBufferInvalidate(sampleBufferRef);
+                    CFRelease(sampleBufferRef);
+                });
+            }
             return YES;
         }
         else
@@ -509,25 +510,6 @@ static CVReturn renderCallback(CVDisplayLinkRef displayLink,
 
     processingFrameTime = currentSampleTime;
     [self processMovieFrame:movieFrame withSampleTime:currentSampleTime];
-}
-
-- (float)currentProgressSecond {
-    if (AVAssetReaderStatusReading == reader.status)
-    {
-        if (processingFrameTime.timescale == 0) {
-            return 0;
-        } else {
-            return  processingFrameTime.value * 1.0f / processingFrameTime.timescale;
-        }
-    }
-    else if ( AVAssetReaderStatusCompleted == reader.status )
-    {
-        return 1.f;
-    }
-    else
-    {
-        return 0.f;
-    }
 }
 
 - (float)progress
