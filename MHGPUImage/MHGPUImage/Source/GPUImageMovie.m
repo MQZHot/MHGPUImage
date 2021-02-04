@@ -50,7 +50,7 @@
 
 - (id)initWithURL:(NSURL *)url;
 {
-    if (!(self = [super init])) 
+    if (!(self = [super init]))
     {
         return nil;
     }
@@ -65,7 +65,7 @@
 
 - (id)initWithAsset:(AVAsset *)asset;
 {
-    if (!(self = [super init])) 
+    if (!(self = [super init]))
     {
       return nil;
     }
@@ -255,14 +255,17 @@
         }
     }
 
-    if ([reader startReading] == NO) 
+    if ([reader startReading] == NO)
     {
             NSLog(@"Error reading from file at URL: %@", self.url);
         return;
     }
 
+    if ([MHGPUImageContext sharedContext].movieWriterDealloc == YES) {
+        return;;
+    }
     __unsafe_unretained GPUImageMovie *weakSelf = self;
-
+    
     if (synchronizedMovieWriter != nil)
     {
         [synchronizedMovieWriter setVideoInputReadyCallback:^{
@@ -353,8 +356,8 @@
 - (void)outputMediaDataWillChange:(AVPlayerItemOutput *)sender
 {
 #if TARGET_IPHONE_SIMULATOR || TARGET_OS_IPHONE
-	// Restart display link.
-	[displayLink setPaused:NO];
+    // Restart display link.
+    [displayLink setPaused:NO];
 #else
     CVDisplayLinkStart(displayLink);
 #endif
@@ -363,15 +366,15 @@
 #if TARGET_IPHONE_SIMULATOR || TARGET_OS_IPHONE
 - (void)displayLinkCallback:(CADisplayLink *)sender
 {
-	/*
-	 The callback gets called once every Vsync.
-	 Using the display link's timestamp and duration we can compute the next time the screen will be refreshed, and copy the pixel buffer for that time
-	 This pixel buffer can then be processed and later rendered on screen.
-	 */
-	// Calculate the nextVsync time which is when the screen will be refreshed next.
-	CFTimeInterval nextVSync = ([sender timestamp] + [sender duration]);
+    /*
+     The callback gets called once every Vsync.
+     Using the display link's timestamp and duration we can compute the next time the screen will be refreshed, and copy the pixel buffer for that time
+     This pixel buffer can then be processed and later rendered on screen.
+     */
+    // Calculate the nextVsync time which is when the screen will be refreshed next.
+    CFTimeInterval nextVSync = ([sender timestamp] + [sender duration]);
 
-	CMTime outputItemTime = [playerItemOutput itemTimeForHostTime:nextVSync];
+    CMTime outputItemTime = [playerItemOutput itemTimeForHostTime:nextVSync];
 
     [self processPixelBufferAtTime:outputItemTime];
 
@@ -402,6 +405,9 @@ static CVReturn renderCallback(CVDisplayLinkRef displayLink,
 
 - (void)processPixelBufferAtTime:(CMTime)outputItemTime {
     if ([playerItemOutput hasNewPixelBufferForItemTime:outputItemTime]) {
+        if ([MHGPUImageContext sharedContext].movieWriterDealloc == YES) {
+            return;;
+        }
         __unsafe_unretained GPUImageMovie *weakSelf = self;
         CVPixelBufferRef pixelBuffer = [playerItemOutput copyPixelBufferForItemTime:outputItemTime itemTimeForDisplay:NULL];
         if( pixelBuffer )
@@ -417,7 +423,7 @@ static CVReturn renderCallback(CVDisplayLinkRef displayLink,
     if (reader.status == AVAssetReaderStatusReading && ! videoEncodingIsFinished)
     {
         CMSampleBufferRef sampleBufferRef = [readerVideoTrackOutput copyNextSampleBuffer];
-        if (sampleBufferRef) 
+        if (sampleBufferRef)
         {
             //NSLog(@"read a video frame: %@", CFBridgingRelease(CMTimeCopyDescription(kCFAllocatorDefault, CMSampleBufferGetOutputPresentationTimeStamp(sampleBufferRef))));
             if (_playAtActualSpeed)
@@ -500,7 +506,7 @@ static CVReturn renderCallback(CVDisplayLinkRef displayLink,
     return NO;
 }
 
-- (void)processMovieFrame:(CMSampleBufferRef)movieSampleBuffer; 
+- (void)processMovieFrame:(CMSampleBufferRef)movieSampleBuffer;
 {
 //    CMTimeGetSeconds
 //    CMTimeSubtract
@@ -723,7 +729,7 @@ static CVReturn renderCallback(CVDisplayLinkRef displayLink,
 //            CVPixelBufferUnlockBaseAddress(movieFrame, 0);
 //            CVOpenGLESTextureCacheFlush(coreVideoTextureCache, 0);
 //            CFRelease(texture);
-//            
+//
 //            outputTexture = 0;
         }
     }
@@ -846,18 +852,18 @@ static CVReturn renderCallback(CVDisplayLinkRef displayLink,
         1.0f, 1.0f,
     };
 
-	glActiveTexture(GL_TEXTURE4);
-	glBindTexture(GL_TEXTURE_2D, luminanceTexture);
-	glUniform1i(yuvConversionLuminanceTextureUniform, 4);
+    glActiveTexture(GL_TEXTURE4);
+    glBindTexture(GL_TEXTURE_2D, luminanceTexture);
+    glUniform1i(yuvConversionLuminanceTextureUniform, 4);
 
     glActiveTexture(GL_TEXTURE5);
-	glBindTexture(GL_TEXTURE_2D, chrominanceTexture);
-	glUniform1i(yuvConversionChrominanceTextureUniform, 5);
+    glBindTexture(GL_TEXTURE_2D, chrominanceTexture);
+    glUniform1i(yuvConversionChrominanceTextureUniform, 5);
 
     glUniformMatrix3fv(yuvConversionMatrixUniform, 1, GL_FALSE, _preferredConversion);
 
     glVertexAttribPointer(yuvConversionPositionAttribute, 2, GL_FLOAT, 0, 0, squareVertices);
-	glVertexAttribPointer(yuvConversionTextureCoordinateAttribute, 2, GL_FLOAT, 0, 0, textureCoordinates);
+    glVertexAttribPointer(yuvConversionTextureCoordinateAttribute, 2, GL_FLOAT, 0, 0, textureCoordinates);
 
     glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
 }
